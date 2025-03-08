@@ -7,8 +7,6 @@
 
 int FindMinPath(struct AVLTree *tree, TYPE *path);
 void printBreadthFirstTree(struct AVLTree *tree);
-void verifyAVLBalance(struct AVLnode *node);
-void printTree(struct AVLnode *node, int depth);
 void _findMinCostPath(struct AVLnode *node, int currentCost, int *minCost, 
 	TYPE *currentPath, TYPE *minPath, int depth, int *minDepth);
 /* -----------------------
@@ -62,21 +60,6 @@ int main(int argc, char** argv) {
 	
 	return 0;
 }
-
-
-void printTree(struct AVLnode *node, int depth) {
-    if (node == NULL) return;
-
-    printTree(node->right, depth + 1);
-
-	int i;
-    for (i = 0; i < depth; i++) {
-        printf("    ");
-    }
-    printf("%d (BF=%d)\n", node->val, bf(node));
-
-    printTree(node->left, depth + 1);
-}
 /* --------------------
 Finds the minimum-cost path in an AVL tree
    Input arguments: 
@@ -90,17 +73,15 @@ Finds the minimum-cost path in an AVL tree
 */
 int FindMinPath(struct AVLTree *tree, TYPE *path)
 {
-	int minCost = INT_MAX;     // Initialize to a high value
-    int minDepth = 0;           // Variable to store the minimum path length
-    TYPE currentPath[100];      // Temporary storage for current path
-
-    /* Check if the tree is empty */
     if (tree == NULL || tree->root == NULL) return 0;
 
-    /* Call helper function to find the minimum-cost path */
+    int minCost = INT_MAX;
+    int minDepth = 0;
+    TYPE currentPath[100];
+
     _findMinCostPath(tree->root, 0, &minCost, currentPath, path, 0, &minDepth);
 
-    return minDepth; /* Return the number of nodes in the min-cost path */
+    return minDepth;
 }
 
 /* Helper function to find the minimum-cost path recursively */
@@ -109,19 +90,16 @@ void _findMinCostPath(struct AVLnode *node, int currentCost, int *minCost,
 
     if (node == NULL) return;
 
-    /* Store the current node in the path */
     currentPath[depth] = node->val;
 
-    /* Calculate cost if not at the root */
     if (depth > 0) {
         currentCost += abs(node->val - currentPath[depth - 1]);
     }
 
-    /* If this is a leaf node, check if this is the new minimum-cost path */
     if (node->left == NULL && node->right == NULL) {
         if (currentCost < *minCost) {
             *minCost = currentCost;
-            *minDepth = depth + 1;  // +1 because depth is 0-based index
+            *minDepth = depth + 1;
             int i;
             for (i = 0; i <= depth; i++) {
                 minPath[i] = currentPath[i];
@@ -130,13 +108,7 @@ void _findMinCostPath(struct AVLnode *node, int currentCost, int *minCost,
         return;
     }
 
-    /* Recur for left and right subtrees */
-    if (node->left != NULL) {
-    }
     _findMinCostPath(node->left, currentCost, minCost, currentPath, minPath, depth + 1, minDepth);
-
-    if (node->right != NULL) {
-    }
     _findMinCostPath(node->right, currentCost, minCost, currentPath, minPath, depth + 1, minDepth);
 }
 
@@ -145,8 +117,8 @@ void _findMinCostPath(struct AVLnode *node, int currentCost, int *minCost,
 /* -----------------------
 Printing the contents of an AVL tree in breadth-first fashion
   param: pointer to a tree
-  pre: assume that tree was initialized well before calling this function
-*/
+  pre: assume that tree was initialized well before calling this function*/
+
 void printBreadthFirstTree(struct AVLTree *tree) {
     if (tree == NULL || tree->root == NULL) return;
 
